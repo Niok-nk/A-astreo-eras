@@ -1,0 +1,6 @@
+---
+const hoy = new Date().toISOString().split('T')[0]
+---
+
+<label for="birthdate">Fecha de nacimiento</label>
+<input type="date" id="birthdate" name="birthdate" max={hoy} required />

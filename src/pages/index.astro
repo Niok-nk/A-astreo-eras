@@ -1,17 +1,115 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+	<h1>Eras</h1>
+
+	<div class="form">
+		<label for="birthdate">Fecha de nacimiento</label>
+		<input type="date" id="birthdate" />
+		<button id="calcular">Calcular</button>
+	</div>
+
+	<div id="resultado" class="resultado"></div>
+</BaseLayout>
+
+<style>
+	.form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+		margin-top: 2rem;
+	}
+	input {
+		padding: 0.5rem 1rem;
+		font-size: 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.5rem;
+		background-color: var(--color-bg-main);
+	}
+	button {
+		padding: 0.5rem 1.5rem;
+		font-size: 1rem;
+		cursor: pointer;
+		border: 1px solid var(--color-border);
+		border-radius: 0.5rem;
+		background-color: var(--color-bg-main);
+	}
+	.resultado {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 2rem;
+	}
+	.cards {
+		display: flex;
+		gap: 2rem;
+	}
+	.resultado:empty::after {
+		content: "Ingresá tu fecha de nacimiento";
+		opacity: 0.6;
+	}
+	.card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 1rem;
+	}
+	.card .value {
+		font-size: 3rem;
+		font-weight: 700;
+	}
+	.card .label {
+		font-size: 0.875rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+	}
+	.subtitle {
+		margin-top: 1rem;
+		opacity: 0.6;
+		font-size: 0.9rem;
+	}
+</style>
+
+<script>
+	import { diasTotalesAPosicion, formatearPosicion } from "../core";
+
+	const input = document.getElementById("birthdate") as HTMLInputElement;
+	const btn = document.getElementById("calcular") as HTMLButtonElement;
+	const resultado = document.getElementById("resultado") as HTMLDivElement;
+
+	input.max = new Date().toISOString().split("T")[0];
+
+	function mostrarEra(nacimiento: Date) {
+		const ahora = new Date();
+		const hoyLocal = new Date(
+			ahora.getFullYear(),
+			ahora.getMonth(),
+			ahora.getDate(),
+		);
+		const diasTotales = Math.floor(
+			(hoyLocal.getTime() - nacimiento.getTime()) / 86400000,
+		);
+		const pos = diasTotalesAPosicion(diasTotales);
+
+		resultado.innerHTML = `
+			<p class="subtitle">${formatearPosicion(pos)}</p>
+			<div class="cards">
+				<div class="card">
+				<span class="value">[${pos.era} |</span>
+				<span class="value">${pos.periodo} |</span>
+				<span class="value">${pos.semana} |</span>
+				<span class="value">${pos.dia}]</span>
+				</div>
+			</div>
+    	`;
+	}
+
+	btn.addEventListener("click", () => {
+		if (!input.value) return;
+		const [y, m, d] = input.value.split("-").map(Number);
+		mostrarEra(new Date(y, m - 1, d));
+	});
+</script>

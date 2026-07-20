@@ -1,28 +1,38 @@
 import { describe, it, expect } from "vitest";
-import { semanasTotalesAPosicion, posicionASemanasTotales } from '../../src/core/convert'
+import { semanasTotalesAPosicion, posicionASemanasTotales, diasTotalesAPosicion } from '../../src/core/convert'
 
-describe('Semanas totales a posición', () => {
-    it('devuelve Era 1, Período 1, Semana 1 con 0 semanas', () => {
-        const resultado = semanasTotalesAPosicion(0);
-        expect(resultado).toEqual({
-            era: 1,
-            periodo: 1,
-            semana: 1,
-        })
-    })
+describe('semanasTotalesAPosicion', () => {
+  it('devuelve Era 1, Período 1, Semana 1, Día 1 con 0 semanas', () => {
+    expect(semanasTotalesAPosicion(0)).toEqual({ era: 1, periodo: 1, semana: 1, dia: 1 })
+  })
+
+  it.each([
+    [0,    1, 1, 1],
+    [12,   1, 2, 1],
+    [100,  1, 9, 5],
+    [624,  2, 1, 1],
+    [1248, 3, 1, 1],
+  ])('%i semanas → era %i, periodo %i, semana %i', (semanas, era, periodo, semana) => {
+    expect(semanasTotalesAPosicion(semanas)).toEqual({ era, periodo, semana, dia: 1 })
+  })
 })
 
-describe('Posición a semanas totales', () => {
-    it.each([
-        [0, 1, 1, 1],
-        [12, 1, 2, 1],
-        [100, 1, 9, 5],
-        [624, 2, 1, 1],
-        [1248, 3, 1, 1],
-    ])('%i semanas → era %i, periodo %i, semana %i', (semanas, era, periodo, semana) => {
-        expect(semanasTotalesAPosicion(semanas)).toEqual({ era, periodo, semana })
-    })
+describe('diasTotalesAPosicion', () => {
+  it.each([
+    [0,      1, 1, 1, 1],
+    [6,      1, 1, 1, 7],
+    [7,      1, 1, 2, 1],
+    [84,     1, 2, 1, 1],
+    [4368,   2, 1, 1, 1],
+  ])('%i días → era %i, periodo %i, semana %i, día %i', (dias, era, periodo, semana, dia) => {
+    expect(diasTotalesAPosicion(dias)).toEqual({ era, periodo, semana, dia })
+  })
 })
 
-
-
+describe('posicionASemanasTotales', () => {
+  it('ida y vuelta con semanasTotalesAPosicion', () => {
+    [0, 12, 100, 624, 1248].forEach(n => {
+      expect(posicionASemanasTotales(semanasTotalesAPosicion(n))).toBe(n)
+    })
+  })
+})

@@ -1,0 +1,28 @@
+---
+import type { TimePosition } from '../core'
+import EraCard from './EraCard.astro'
+
+const { posicion } = Astro.props as { posicion: TimePosition | null }
+---
+
+{posicion ? (
+  <div class="clock">
+    <EraCard label="Era" value={posicion.era} />
+    <EraCard label="Período" value={posicion.periodo} />
+    <EraCard label="Semana" value={posicion.semana} />
+  </div>
+) : (
+  <p class="empty">Ingresá tu fecha de nacimiento</p>
+)}
+
+<style>
+  .clock {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .empty {
+    margin-top: 2rem;
+    opacity: 0.6;
+  }
+</style>
