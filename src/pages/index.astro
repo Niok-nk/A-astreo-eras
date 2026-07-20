@@ -7,11 +7,15 @@ import EraClock from "../components/EraClock.astro";
 	<h1>Eras</h1>
 
 	<div class="form">
-		<label for="birthdate">Fecha de nacimiento</label>
-		<div class="date">
+		<div class="fechas">
+			<label for="birthdate">Fecha de nacimiento</label>
 			<input type="date" id="birthdate" />
-			<button id="calcular">Calcular</button>
 		</div>
+		<div class="fechas">
+			<label for="refdate">Fecha de referencia</label>
+			<input type="date" id="refdate" />
+		</div>
+		<button id="calcular">Calcular</button>
 	</div>
 
 	<EraClock posicion={null} />
@@ -26,17 +30,18 @@ import EraClock from "../components/EraClock.astro";
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.5rem;
 		margin-top: 2rem;
 		border-right: 1px solid var(--color-bg-card);
 		border-left: 1px solid var(--color-bg-card);
-		padding: 20dvh 5rem;
+		padding: 21dvh 9rem;
 	}
-	.date{
+	.fechas{
+		margin-bottom: 2rem;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 1rem;
 	}
 	input {
 		padding: 0.5rem 1rem;
@@ -64,6 +69,7 @@ import EraClock from "../components/EraClock.astro";
 	import { diasTotalesAPosicion, formatearPosicion } from "../core";
 
 	const input = document.getElementById("birthdate") as HTMLInputElement;
+	const refInput = document.getElementById("refdate") as HTMLInputElement;
 	const btn = document.getElementById("calcular") as HTMLButtonElement;
 	const valores = document.querySelectorAll(
 		".card .value",
@@ -72,30 +78,29 @@ import EraClock from "../components/EraClock.astro";
 	const subtitulo = document.querySelector(".subtitle") as HTMLElement;
 
 	const hoy = new Date();
-	input.max = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
+	const hoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
+	input.max = hoyStr;
+	refInput.value = hoyStr;
 
-	function mostrarEra(nacimiento: Date) {
-		const hoyLocal = new Date(
-			hoy.getFullYear(),
-			hoy.getMonth(),
-			hoy.getDate(),
-		);
-		const diasTotales = Math.floor(
-			(hoyLocal.getTime() - nacimiento.getTime()) / 86400000,
-		);
+	function mostrarEra(nacimiento: Date, referencia: Date) {
+		const refLocal = new Date(referencia.getFullYear(), referencia.getMonth(), referencia.getDate(), 12);
+		const diasTotales = Math.floor((refLocal.getTime() - nacimiento.getTime()) / 86400000);
 		const pos = diasTotalesAPosicion(diasTotales);
 		const labels = [pos.era, pos.periodo, pos.semana, pos.dia];
 
-		valores.forEach((el, i) => {
-			el.textContent = String(labels[i]);
-		});
+		valores.forEach((el, i) => { el.textContent = String(labels[i]) });
 		compacta.textContent = `[ ${labels.join(' | ')} ]`;
 		subtitulo.textContent = formatearPosicion(pos);
 	}
 
-	btn.addEventListener("click", () => {
-		if (!input.value) return;
+	function calcular() {
+		if (!input.value || !refInput.value) return;
 		const [y, m, d] = input.value.split("-").map(Number);
-		mostrarEra(new Date(y, m - 1, d));
-	});
+		const [ry, rm, rd] = refInput.value.split("-").map(Number);
+		mostrarEra(new Date(y, m - 1, d, 12), new Date(ry, rm - 1, rd));
+	}
+
+	input.addEventListener("change", calcular);
+	refInput.addEventListener("change", calcular);
+	btn.addEventListener("click", calcular);
 </script>
