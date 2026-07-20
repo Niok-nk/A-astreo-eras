@@ -17,14 +17,15 @@
 
     --color-bg-main: #e6e6e6;
     --color-bg-card: #ffffff;
+    --color-bg-hover: #dddddd;
 
     --color-border: #dbdbdb;
 
     --color-text-main: #707070;
     --color-text-secondary: #9e9e9e;
 
-    --color-accent: #dcc4ec;
-    --color-accent-hover: #b4b0dd;
+    --color-accent: #cccccc;
+    --color-accent-hover: #c8c7d1;
     --color-accent-text: #ffffff;
 
     --color-focus-ring: rgb(217, 187, 241);
@@ -44,6 +45,12 @@ input,
 button,
 select,
 textarea {
-    font-family: inherit;
+    font-family: var(--font-mono);
+    color: var(--color-text-main);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
 }
 

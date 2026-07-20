@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import EraClock from "../components/EraClock.astro";
 ---
 
 <BaseLayout>
@@ -7,14 +8,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 	<div class="form">
 		<label for="birthdate">Fecha de nacimiento</label>
-		<input type="date" id="birthdate" />
-		<button id="calcular">Calcular</button>
+		<div class="date">
+			<input type="date" id="birthdate" />
+			<button id="calcular">Calcular</button>
+		</div>
 	</div>
 
-	<div id="resultado" class="resultado"></div>
+	<EraClock posicion={null} />
 </BaseLayout>
 
 <style>
+	h1 {
+		text-align: center;
+	}
 	.form {
 		display: flex;
 		flex-direction: column;
@@ -22,54 +28,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 		gap: 0.75rem;
 		margin-top: 2rem;
 	}
+	.date{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 0.75rem;
+	}
 	input {
 		padding: 0.5rem 1rem;
 		font-size: 1rem;
 		border: 1px solid var(--color-border);
 		border-radius: 0.5rem;
-		background-color: var(--color-bg-main);
+		background-color: var(--bg-color-main);
+		letter-spacing: 0.2rem;
 	}
 	button {
 		padding: 0.5rem 1.5rem;
 		font-size: 1rem;
 		cursor: pointer;
-		border: 1px solid var(--color-border);
+		background: var(--color-accent);
+		color: var(--color-accent-text);
+		border: none;
 		border-radius: 0.5rem;
-		background-color: var(--color-bg-main);
 	}
-	.resultado {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 2rem;
-	}
-	.cards {
-		display: flex;
-		gap: 2rem;
-	}
-	.resultado:empty::after {
-		content: "Ingresá tu fecha de nacimiento";
-		opacity: 0.6;
-	}
-	.card {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 1rem;
-	}
-	.card .value {
-		font-size: 3rem;
-		font-weight: 700;
-	}
-	.card .label {
-		font-size: 0.875rem;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-	}
-	.subtitle {
-		margin-top: 1rem;
-		opacity: 0.6;
-		font-size: 0.9rem;
+	button:hover {
+		background: var(--color-accent-hover);
 	}
 </style>
 
@@ -78,33 +61,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 	const input = document.getElementById("birthdate") as HTMLInputElement;
 	const btn = document.getElementById("calcular") as HTMLButtonElement;
-	const resultado = document.getElementById("resultado") as HTMLDivElement;
+	const valores = document.querySelectorAll(
+		".card .value",
+	) as NodeListOf<HTMLElement>;
+	const compacta = document.querySelector(".compact") as HTMLElement;
+	const subtitulo = document.querySelector(".subtitle") as HTMLElement;
 
-	input.max = new Date().toISOString().split("T")[0];
+	const hoy = new Date();
+	input.max = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
 
 	function mostrarEra(nacimiento: Date) {
-		const ahora = new Date();
 		const hoyLocal = new Date(
-			ahora.getFullYear(),
-			ahora.getMonth(),
-			ahora.getDate(),
+			hoy.getFullYear(),
+			hoy.getMonth(),
+			hoy.getDate(),
 		);
 		const diasTotales = Math.floor(
 			(hoyLocal.getTime() - nacimiento.getTime()) / 86400000,
 		);
 		const pos = diasTotalesAPosicion(diasTotales);
+		const labels = [pos.era, pos.periodo, pos.semana, pos.dia];
 
-		resultado.innerHTML = `
-			<p class="subtitle">${formatearPosicion(pos)}</p>
-			<div class="cards">
-				<div class="card">
-				<span class="value">[${pos.era} |</span>
-				<span class="value">${pos.periodo} |</span>
-				<span class="value">${pos.semana} |</span>
-				<span class="value">${pos.dia}]</span>
-				</div>
-			</div>
-    	`;
+		valores.forEach((el, i) => {
+			el.textContent = String(labels[i]);
+		});
+		compacta.textContent = `[ ${labels.join(' | ')} ]`;
+		subtitulo.textContent = formatearPosicion(pos);
 	}
 
 	btn.addEventListener("click", () => {

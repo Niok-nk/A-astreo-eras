@@ -1,28 +1,46 @@
 ---
 import type { TimePosition } from '../core'
+import { formatearPosicion } from '../core'
 import EraCard from './EraCard.astro'
 
 const { posicion } = Astro.props as { posicion: TimePosition | null }
+const texto = posicion ? formatearPosicion(posicion) : 'Ingresá tu fecha de nacimiento'
 ---
 
-{posicion ? (
-  <div class="clock">
-    <EraCard label="Era" value={posicion.era} />
-    <EraCard label="Período" value={posicion.periodo} />
-    <EraCard label="Semana" value={posicion.semana} />
+<div class="clock">
+  <div class="cards">
+    <EraCard label="Era" value={posicion?.era ?? '—'} />
+    <EraCard label="Período" value={posicion?.periodo ?? '—'} />
+    <EraCard label="Semana" value={posicion?.semana ?? '—'} />
+    <EraCard label="Día" value={posicion?.dia ?? '—'} />
   </div>
-) : (
-  <p class="empty">Ingresá tu fecha de nacimiento</p>
-)}
+  <p class="subtitle">{texto}</p>
+  <p class="compact">
+    [ {posicion?.era ?? '—'} | {posicion?.periodo ?? '—'} | {posicion?.semana ?? '—'} | {posicion?.dia ?? '—'} ]
+  </p>
+</div>
 
 <style>
   .clock {
     display: flex;
-    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
     margin-top: 2rem;
   }
-  .empty {
-    margin-top: 2rem;
+  .cards {
+    display: flex;
+    gap: 2rem;
+  }
+  .subtitle {
+    margin-top: 0.75rem;
     opacity: 0.6;
+    font-size: 0.9rem;
+  }
+  .compact {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
   }
 </style>

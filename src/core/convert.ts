@@ -22,5 +22,3 @@ export function diasTotalesAPosicion(diasTotales: number): TimePosition {
 export function posicionASemanasTotales(pos: TimePosition): number {
     return (pos.era - 1) * SEMANAS_POR_ERA + (pos.periodo - 1) * SEMANAS_POR_PERIODO + pos.semana - 1
 }
-
-
