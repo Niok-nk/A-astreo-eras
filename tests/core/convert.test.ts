@@ -24,8 +24,24 @@ describe('diasTotalesAPosicion', () => {
     [7,      1, 1, 2, 1],
     [84,     1, 2, 1, 1],
     [4368,   2, 1, 1, 1],
+    [8736,   3, 1, 1, 1],
   ])('%i días → era %i, periodo %i, semana %i, día %i', (dias, era, periodo, semana, dia) => {
     expect(diasTotalesAPosicion(dias)).toEqual({ era, periodo, semana, dia })
+  })
+
+  it('maneja ~100 años (36500 días) sin errores', () => {
+    const pos = diasTotalesAPosicion(36500)
+    expect(pos.era).toBeGreaterThanOrEqual(1)
+    expect(pos.periodo).toBeGreaterThanOrEqual(1)
+    expect(pos.semana).toBeGreaterThanOrEqual(1)
+    expect(pos.dia).toBeGreaterThanOrEqual(1)
+    expect(pos.dia).toBeLessThanOrEqual(7)
+    expect(pos.semana).toBeLessThanOrEqual(12)
+    expect(pos.periodo).toBeLessThanOrEqual(52)
+  })
+
+  it('maneja 0 días correctamente', () => {
+    expect(diasTotalesAPosicion(0)).toEqual({ era: 1, periodo: 1, semana: 1, dia: 1 })
   })
 })
 

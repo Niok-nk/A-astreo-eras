@@ -27,8 +27,17 @@ import ParticlesBackground from '../components/ParticlesBackground.astro';
     z-index: 1;
     min-height: 100vh;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  @media (min-width: 768px) {
+    main {
+      flex-direction: row;
+      justify-content: space-around;
+      padding: 2rem;
+    }
   }
 </style>

@@ -29,7 +29,15 @@ const texto = posicion ? formatearPosicion(posicion) : 'Ingresá tu fecha de nac
   }
   .cards {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  @media (min-width: 480px) {
+    .cards {
+      gap: 2rem;
+    }
   }
   .subtitle {
     margin-top: 0.75rem;

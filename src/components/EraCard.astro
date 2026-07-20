@@ -15,12 +15,21 @@ const { label, value } = Astro.props
     padding: 1rem;
   }
   .value {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 700;
   }
   .label {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+  }
+
+  @media (min-width: 480px) {
+    .value {
+      font-size: 3rem;
+    }
+    .label {
+      font-size: 0.875rem;
+    }
   }
 </style>
