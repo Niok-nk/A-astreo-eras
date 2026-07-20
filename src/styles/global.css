@@ -16,7 +16,7 @@
 :root {
 
     --color-bg-main: #e6e6e6;
-    --color-bg-card: #ffffff;
+    --color-bg-card: #bdbdbd;
     --color-bg-hover: #dddddd;
 
     --color-border: #dbdbdb;
@@ -24,11 +24,11 @@
     --color-text-main: #707070;
     --color-text-secondary: #9e9e9e;
 
-    --color-accent: #cccccc;
-    --color-accent-hover: #c8c7d1;
+    --color-accent: #b9b9b9;
+    --color-accent-hover: #b1b1b1;
     --color-accent-text: #ffffff;
 
-    --color-focus-ring: rgb(217, 187, 241);
+    --color-focus-ring: rgb(255, 255, 255);
 
 
     --font-mono: 'Spline Sans Mono', monospace;
