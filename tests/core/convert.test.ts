@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { semanasTotalesAPosicion, posicionASemanasTotales, diasTotalesAPosicion } from '../../src/core/convert'
+import { semanasTotalesAPosicion, posicionASemanasTotales, diasTotalesAPosicion, positionADiasTotales } from '../../src/core/convert'
 
 describe('semanasTotalesAPosicion', () => {
   it('devuelve Era 1, Período 1, Semana 1, Día 1 con 0 semanas', () => {
@@ -49,6 +49,24 @@ describe('posicionASemanasTotales', () => {
   it('ida y vuelta con semanasTotalesAPosicion', () => {
     [0, 12, 100, 624, 1248].forEach(n => {
       expect(posicionASemanasTotales(semanasTotalesAPosicion(n))).toBe(n)
+    })
+  })
+})
+
+describe('positionADiasTotales', () => {
+  it.each([
+    [{ era: 1, periodo: 1, semana: 1, dia: 1 }, 0],
+    [{ era: 1, periodo: 1, semana: 1, dia: 7 }, 6],
+    [{ era: 1, periodo: 1, semana: 2, dia: 1 }, 7],
+    [{ era: 1, periodo: 2, semana: 1, dia: 1 }, 84],
+    [{ era: 2, periodo: 1, semana: 1, dia: 1 }, 4368],
+  ])('%j → %i días', (pos, dias) => {
+    expect(positionADiasTotales(pos)).toBe(dias)
+  })
+
+  it('ida y vuelta con diasTotalesAPosicion', () => {
+    [0, 6, 7, 84, 365, 4368, 36500].forEach(n => {
+      expect(positionADiasTotales(diasTotalesAPosicion(n))).toBe(n)
     })
   })
 })

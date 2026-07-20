@@ -1,0 +1,123 @@
+<div class="converter">
+  <h3>Eras → Fecha</h3>
+  <div class="inputs">
+    <div class="field">
+      <label for="e-era">Era</label>
+      <input type="number" id="e-era" min="1" value="1" />
+    </div>
+    <div class="field">
+      <label for="e-periodo">Período</label>
+      <input type="number" id="e-periodo" min="1" max="52" value="1" />
+    </div>
+    <div class="field">
+      <label for="e-semana">Semana</label>
+      <input type="number" id="e-semana" min="1" max="12" value="1" />
+    </div>
+    <div class="field">
+      <label for="e-dia">Día</label>
+      <input type="number" id="e-dia" min="1" max="7" value="1" />
+    </div>
+  </div>
+  <label for="e-birth">Fecha de nacimiento</label>
+  <input type="date" id="e-birth" />
+  <p id="e-result"></p>
+</div>
+
+<style>
+  .converter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
+    width: 100%;
+    margin-top: 7rem;  
+  }
+
+  @media (min-width: 768px) {
+    .converter {
+      flex-direction: row;
+      gap: 3rem;
+      width: auto;
+      margin-top: 0;
+    }
+  }
+  h3 {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+  .inputs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .field label, label {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+  }
+  input {
+    padding: 0.5rem;
+    font-family: inherit;
+    font-size: 0.6rem;
+    width: 5ch;
+    text-align: center;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--color-bg-main);
+    width: 3rem;
+  }
+  input[type="date"] {
+    width: auto;
+  }
+  #e-result {
+    font-size: 0.6rem;
+    text-align: center;
+  }
+</style>
+
+<script>
+  import { positionADiasTotales } from '../core'
+
+  const era = document.getElementById('e-era') as HTMLInputElement
+  const periodo = document.getElementById('e-periodo') as HTMLInputElement
+  const semana = document.getElementById('e-semana') as HTMLInputElement
+  const dia = document.getElementById('e-dia') as HTMLInputElement
+  const birth = document.getElementById('e-birth') as HTMLInputElement
+  const result = document.getElementById('e-result') as HTMLParagraphElement
+
+  const hoy = new Date()
+  birth.max = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
+
+  function actualizar() {
+    if (!birth.value) return
+
+    const pos = {
+      era: parseInt(era.value) || 1,
+      periodo: parseInt(periodo.value) || 1,
+      semana: parseInt(semana.value) || 1,
+      dia: parseInt(dia.value) || 1,
+    }
+
+    const [y, m, d] = birth.value.split('-').map(Number)
+    const nacimiento = new Date(y, m - 1, d, 12)
+    const diasTotales = positionADiasTotales(pos)
+    const fecha = new Date(nacimiento.getTime() + diasTotales * 86400000)
+
+    result.textContent = fecha.toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
+
+  [era, periodo, semana, dia, birth].forEach(el => el.addEventListener('change', actualizar))
+</script>

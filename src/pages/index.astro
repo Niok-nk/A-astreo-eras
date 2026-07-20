@@ -1,24 +1,28 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EraClock from "../components/EraClock.astro";
+import EraToDate from "../components/EraToDate.astro";
 ---
 
 <BaseLayout>
-	<h1>Eras</h1>
+	<EraToDate />
+	<div class="container">
+		<h1>Eras</h1>
 
-	<div class="form">
-		<div class="fechas">
-			<label for="birthdate">Fecha de nacimiento</label>
-			<input type="date" id="birthdate" />
+		<div class="form">
+			<div class="fechas">
+				<label for="birthdate">Fecha de nacimiento</label>
+				<input type="date" id="birthdate" />
+			</div>
+			<div class="fechas">
+				<label for="refdate">Fecha de referencia</label>
+				<input type="date" id="refdate" />
+			</div>
+			<button id="calcular">Calcular</button>
 		</div>
-		<div class="fechas">
-			<label for="refdate">Fecha de referencia</label>
-			<input type="date" id="refdate" />
-		</div>
-		<button id="calcular">Calcular</button>
+
+		<EraClock posicion={null} />
 	</div>
-
-	<EraClock posicion={null} />
 </BaseLayout>
 
 <style>
@@ -26,6 +30,23 @@ import EraClock from "../components/EraClock.astro";
 		text-align: center;
 	}
 
+	.container {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 2rem;
+	}
+
+	@media (min-width: 768px) {
+		.container {
+			flex-direction: row;
+			justify-content: space-around;
+			gap: 2rem;
+		}
+	}
 	.form {
 		display: flex;
 		flex-direction: column;
@@ -39,10 +60,10 @@ import EraClock from "../components/EraClock.astro";
 		.form {
 			border-right: 1px solid var(--color-bg-card);
 			border-left: 1px solid var(--color-bg-card);
-			padding: 20dvh 5rem;
+			padding: 15dvh 4rem;
 		}
 	}
-	.fechas{
+	.fechas {
 		margin-bottom: 2rem;
 		display: flex;
 		flex-direction: row;
@@ -89,13 +110,22 @@ import EraClock from "../components/EraClock.astro";
 	refInput.value = hoyStr;
 
 	function mostrarEra(nacimiento: Date, referencia: Date) {
-		const refLocal = new Date(referencia.getFullYear(), referencia.getMonth(), referencia.getDate(), 12);
-		const diasTotales = Math.floor((refLocal.getTime() - nacimiento.getTime()) / 86400000);
+		const refLocal = new Date(
+			referencia.getFullYear(),
+			referencia.getMonth(),
+			referencia.getDate(),
+			12,
+		);
+		const diasTotales = Math.floor(
+			(refLocal.getTime() - nacimiento.getTime()) / 86400000,
+		);
 		const pos = diasTotalesAPosicion(diasTotales);
 		const labels = [pos.era, pos.periodo, pos.semana, pos.dia];
 
-		valores.forEach((el, i) => { el.textContent = String(labels[i]) });
-		compacta.textContent = `[ ${labels.join(' | ')} ]`;
+		valores.forEach((el, i) => {
+			el.textContent = String(labels[i]);
+		});
+		compacta.textContent = `[ ${labels.join(" | ")} ]`;
 		subtitulo.textContent = formatearPosicion(pos);
 	}
 
@@ -111,10 +141,10 @@ import EraClock from "../components/EraClock.astro";
 	btn.addEventListener("click", calcular);
 
 	subtitulo.addEventListener("click", () => {
-		navigator.clipboard.writeText(subtitulo.textContent ?? '')
-	})
+		navigator.clipboard.writeText(subtitulo.textContent ?? "");
+	});
 
 	compacta.addEventListener("click", () => {
-		navigator.clipboard.writeText(compacta.textContent ?? '')
-	})
+		navigator.clipboard.writeText(compacta.textContent ?? "");
+	});
 </script>
