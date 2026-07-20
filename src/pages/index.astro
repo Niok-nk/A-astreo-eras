@@ -103,4 +103,12 @@ import EraClock from "../components/EraClock.astro";
 	input.addEventListener("change", calcular);
 	refInput.addEventListener("change", calcular);
 	btn.addEventListener("click", calcular);
+
+	subtitulo.addEventListener("click", () => {
+		navigator.clipboard.writeText(subtitulo.textContent ?? '')
+	})
+
+	compacta.addEventListener("click", () => {
+		navigator.clipboard.writeText(compacta.textContent ?? '')
+	})
 </script>
