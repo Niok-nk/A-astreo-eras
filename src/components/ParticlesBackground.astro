@@ -1,0 +1,119 @@
+<canvas id="bg"></canvas>
+
+<style>
+  #bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    background: transparent;
+  }
+</style>
+
+<script>
+  import * as THREE from 'three'
+
+  const canvas = document.getElementById('bg') as HTMLCanvasElement
+  if (!canvas) {
+    console.error('canvas #bg not found')
+  }
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.setClearColor(0x000000, 0)
+
+  const scene = new THREE.Scene()
+
+  const camera = new THREE.OrthographicCamera(
+    -window.innerWidth / 2, window.innerWidth / 2,
+    window.innerHeight / 2, -window.innerHeight / 2,
+    0.1, 10
+  )
+  camera.position.z = 1
+
+  const COLS = 50
+  const ROWS = 30
+  const spacing = 25
+  const count = COLS * ROWS
+
+  const geometry = new THREE.BufferGeometry()
+  const positions = new Float32Array(count * 3)
+  const restPositions = new Float32Array(count * 3)
+
+  let idx = 0
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      const px = (x - COLS / 2 + 0.5) * spacing
+      const py = (y - ROWS / 2 + 0.5) * spacing
+      restPositions[idx] = px
+      restPositions[idx + 1] = py
+      restPositions[idx + 2] = 0
+      positions[idx] = px
+      positions[idx + 1] = py
+      positions[idx + 2] = 0
+      idx += 3
+    }
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+
+  const material = new THREE.PointsMaterial({
+    color: 0xcccccc,
+    size: 3,
+  })
+
+  const points = new THREE.Points(geometry, material)
+  scene.add(points)
+
+  const raycaster = new THREE.Raycaster()
+  const mouse = new THREE.Vector2(999, 999)
+  const target = new THREE.Vector2(999, 999)
+
+  window.addEventListener('mousemove', (e) => {
+    target.x = e.clientX - window.innerWidth / 2
+    target.y = -(e.clientY - window.innerHeight / 2)
+  })
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    camera.left = -window.innerWidth / 2
+    camera.right = window.innerWidth / 2
+    camera.top = window.innerHeight / 2
+    camera.bottom = -window.innerHeight / 2
+    camera.updateProjectionMatrix()
+  })
+
+  const posArr = geometry.attributes.position.array as Float32Array
+
+  function animate() {
+    requestAnimationFrame(animate)
+
+    mouse.x += (target.x - mouse.x) * 0.1
+    mouse.y += (target.y - mouse.y) * 0.1
+
+    for (let i = 0; i < posArr.length; i += 3) {
+      const rx = restPositions[i]
+      const ry = restPositions[i + 1]
+      const dx = mouse.x - rx
+      const dy = mouse.y - ry
+      const dist = Math.sqrt(dx * dx + dy * dy)
+
+      if (dist < 150) {
+        const push = Math.max(0, 1 - dist / 150)
+        posArr[i] = rx + dx * push * 0.4
+        posArr[i + 1] = ry + dy * push * 0.4
+      } else {
+        posArr[i] += (rx - posArr[i]) * 0.05
+        posArr[i + 1] += (ry - posArr[i + 1]) * 0.05
+      }
+    }
+
+    geometry.attributes.position.needsUpdate = true
+    renderer.render(scene, camera)
+  }
+
+  animate()
+</script>

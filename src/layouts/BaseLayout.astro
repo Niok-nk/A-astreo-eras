@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ParticlesBackground from '../components/ParticlesBackground.astro';
 ---
 
 <!doctype html>
@@ -12,13 +13,18 @@ import '../styles/global.css';
     <meta name="generator" content={Astro.generator} />
     <title>Astreo | Eras</title>
   </head>
-  <main>
-    <slot />
-  </main>
+  <body>
+    <ParticlesBackground />
+    <main>
+      <slot />
+    </main>
+  </body>
 </html>
 
 <style>
   main {
+    position: relative;
+    z-index: 1;
     min-height: 100vh;
     display: flex;
     flex-direction: row;
